@@ -5,8 +5,6 @@
 * The node type is also a class template.
 */
 
-#ifndef LINKEDLIST_H
-#define LINKEDLIST_H
 
 #include <cstdlib>
 #include <iostream>
@@ -249,36 +247,24 @@ LinkedList<T>::~LinkedList() {
 template <typename T>
 void LinkedList<T>::reverseList() {
 
-	ListNode<T> *nodePtr = head->next; //to traverse the front
+	//use some nodes to traverse the list
+	ListNode<T> *nodePtr = NULL;
+	ListNode<T> *temp = NULL;
 
-	ListNode<T> *previous = head;  //to traverse the end
+	//we will use head to traverse the list
+	while(head) {
 
-	ListNode<T> *temp = nodePtr;
-/*
-	std::cout << nodePtr->value << std::endl;
-	std::cout << nodePtr->next << std::endl;
+		temp = head->next;
 
-	std::cout << previous->value << std::endl;
-	std::cout << previous->next << std::endl;
+		head->next = nodePtr;
 
-	std::cout << temp->value << std::endl;
-	std::cout << temp->next << std::endl;*/
+		nodePtr = head;
 
-	while(temp != NULL) {
-
-		temp = nodePtr->next;
-
-		nodePtr->next = previous;
-
-		previous = nodePtr;
-
-		nodePtr = temp;
+		head = temp;
 
 	}
 
+	//re-establish the proper head
 	head = nodePtr;
 
-
 }
-
-#endif/* LINKEDLIST_H */
