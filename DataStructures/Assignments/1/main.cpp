@@ -43,7 +43,7 @@ int main() {
 	string words;
 
 	//prompt the user for some text and assign it to the string
-	std::cout << "Enter a string to be tested for palidrome: " << std::endl;
+	std::cout << "Enter a string to be tested for palidrome: " ;
 	std::getline(cin, words);
 
 	//initialize a que and stack
@@ -66,11 +66,11 @@ int main() {
 		if( q.pop() == s.pop() )
             continue;
         pal = 0;
-        break;        
+        break;
 	}
 
     //print the results
-    std::cout << (pal ? "Succes!" : "Failure!");
+    std::cout << (pal ? "Succes!" : "Failure!") << std::endl;
 
     std::cin.get();
 	return 0;
