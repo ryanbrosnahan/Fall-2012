@@ -1,40 +1,22 @@
 /*
-* Author: Ryan Brosnahan
-*
-* A class template for holding a linked list.
-* The node type is also a class template.
-*/
+LinkedList.cpp  - Templated linked list
+
+Ryan Brosnahan
+BrosnahanRyan@gmail.com
+rjb39
+ */
 
 
 #include <cstdlib>
 #include <iostream>
+#include "Node.cpp"
 
 using namespace std;
 
-/*
-* The ListNode class creates a type used to
-* store a node of the linked list.
-*/
-template <typename T>
-class ListNode {
-	public:
-	T value; // Node value
-	ListNode<T> *next; // Pointer to the next node
-
-	// Constructor
-	ListNode (T nodeValue) {
-	value = nodeValue;
-	next = NULL;
-	}
-};
-
-/*
-* LinkedList class
-*/
 template <typename T>
 class LinkedList {
 	private:
-	ListNode<T> *head; // List head pointer
+	Node<T> *head; // List head pointer
 
 	public:
 	// Constructor
@@ -61,11 +43,11 @@ class LinkedList {
 */
 template <typename T>
 void LinkedList<T>::appendNode(T newValue) {
-	ListNode<T> *newNode; // To point to a new node
-	ListNode<T> *nodePtr; // To move through the list
+	Node<T> *newNode; // To point to a new node
+	Node<T> *nodePtr; // To move through the list
 
 	// Allocate a new node and store newValue there
-	newNode = new ListNode<T>(newValue);
+	newNode = new Node<T>(newValue);
 
 	// If there are no nodes in the list, make newNode the first node
 	if (!head)
@@ -90,7 +72,7 @@ void LinkedList<T>::appendNode(T newValue) {
 */
 template <typename T>
 void LinkedList<T>::displayList() const {
-	ListNode<T> *nodePtr; // to move through the list
+	Node<T> *nodePtr; // to move through the list
 
 	// Position nodePtr at the head of the list
 	nodePtr = head;
@@ -105,7 +87,7 @@ void LinkedList<T>::displayList() const {
 		nodePtr = nodePtr->next;
 	}
 
-	cout << "]\n";
+	cout << "\n";
 }
 
 /*
@@ -115,12 +97,12 @@ void LinkedList<T>::displayList() const {
 template <typename T>
 void LinkedList<T>::insertNode(T newValue) {
 
-	ListNode<T> *newNode; // a new node
-	ListNode<T> *nodePtr; // to traverse the list
-	ListNode<T> *previousNode = NULL; // the previous node
+	Node<T> *newNode; // a new node
+	Node<T> *nodePtr; // to traverse the list
+	Node<T> *previousNode = NULL; // the previous node
 
 	// Allocate a new node and store newValue there
-	newNode = new ListNode<T>(newValue);
+	newNode = new Node<T>(newValue);
 
 	// If there are no nodes in the list, make the newNode the first
 	// node
@@ -167,8 +149,8 @@ void LinkedList<T>::insertNode(T newValue) {
 */
 template <typename T>
 void LinkedList<T>::deleteNode(T searchValue) {
-	ListNode<T> *nodePtr; // to traverse the list
-	ListNode<T> *previousNode; // to point to the previous node
+	Node<T> *nodePtr; // to traverse the list
+	Node<T> *previousNode; // to point to the previous node
 
 	// if the list is empty do nothing
 	if (!head)
@@ -205,7 +187,7 @@ void LinkedList<T>::deleteNode(T searchValue) {
 template <class T>
 bool LinkedList<T>::findNode(const T& value) const{
 
-	ListNode<T> *searchnode = head;
+	Node<T> *searchnode = head;
 
 	while(searchnode != NULL){
 
@@ -225,8 +207,8 @@ bool LinkedList<T>::findNode(const T& value) const{
 */
 template <typename T>
 LinkedList<T>::~LinkedList() {
-	ListNode<T> *nodePtr; // to traverse the list
-	ListNode<T> *nextNode; // to point to the next node
+	Node<T> *nodePtr; // to traverse the list
+	Node<T> *nextNode; // to point to the next node
 
 	// Position nodePtr at the head of the list
 	nodePtr = head;
@@ -248,8 +230,8 @@ template <typename T>
 void LinkedList<T>::reverseList() {
 
 	//use some nodes to traverse the list
-	ListNode<T> *nodePtr = NULL;
-	ListNode<T> *temp = NULL;
+	Node<T> *nodePtr = NULL;
+	Node<T> *temp = NULL;
 
 	//we will use head to traverse the list
 	while(head) {

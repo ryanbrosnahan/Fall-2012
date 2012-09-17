@@ -1,19 +1,15 @@
 /*
- * ListQue.cpp  - Linked list implementation of a queue
- *
- * Ryan Brosnahan
- * BrosnahanRyan@gmail.com
- * rjb39
+ListQue.cpp  - Linked list implementation of a queue
+
+Ryan Brosnahan
+BrosnahanRyan@gmail.com
+rjb39
  */
 
 
 #include <cstdlib>
 #include <iostream>
-#include "Node.h"
-using namespace std;
-
-
-
+#include "Node.cpp"
 
 template <class T>
 class ListQue {
@@ -68,6 +64,10 @@ public:
 
     bool isempty() {
         return !(bool)elements;
+    }
+
+    int size() {
+        return elements;
     }
 };
 

@@ -1,8 +1,14 @@
+/*
+ListStack.cpp  - Linked list implementation of a stack
 
+Ryan Brosnahan
+BrosnahanRyan@gmail.com
+rjb39
+ */
 
 #include <cstdlib>
 #include <iostream>
-#include "Node.h"
+#include "Node.cpp"
 
 template <class T>
 class ListStack {

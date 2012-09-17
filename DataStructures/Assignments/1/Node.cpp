@@ -1,7 +1,10 @@
 /*
-    Provided class, Node.
-    No changes need to be done to this class.
-*/
+Node.cpp  - Templated node for use in linked list
+
+Ryan Brosnahan
+BrosnahanRyan@gmail.com
+rjb39
+ */
 
 #ifndef NODE_H
 #define NODE_H
