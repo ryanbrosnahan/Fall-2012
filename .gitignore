@@ -1,2 +1,5 @@
 *.stackdump
 /OOP/001
+*.exe
+*.o
+
