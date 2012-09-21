@@ -1,16 +1,21 @@
 (defun make-board ()
-  (list 'board 0 0 0 0 0 0 0 0 0))
+  (list 'board 0 0 0 0 0 0 0 0 0)
+)
 
 (defun convert-to-letter (v)
   (cond ((equal v 1) "0")
         ((equal v 10) "X")
-        (t " ")))
+        (t " ")
+  )
+)
 
 (defun print-row (x y z)
   (format t "~&  ~A | ~A | ~A"
     (convert-to-letter x)
     (convert-to-letter y)
-    (convert-to-letter z)))
+    (convert-to-letter z)
+  )
+)
 
 (defun print-board (board)
   (format t "~%")
@@ -22,7 +27,8 @@
   (format t "~& ___________")
   (print-row
    (nth 7 board) (nth 8 board) (nth 9 board))
-  (format t "~%~%"))
+  (format t "~%~%")
+)
 
 (defun make-move (player pos board)
   (setf (nth pos board) player)
@@ -85,8 +91,8 @@
   (let* ((best-move (choose-best-move board))
          (pos (first best-move))
          (strategy (second best-move))
-         (new-board (make-move
-                     *computer* pos board)))
+         (new-board (make-move *computer* pos board))
+        )
     (format t "~&My move: ~S" pos)
     (format t "~&My strategy: ~A~%" strategy)
     (print-board new-board)
@@ -94,24 +100,44 @@
            (format t "~&I win!"))
           ((board-full-p new-board)
            (format t "~&Tie game."))
-          (t (opponent-move new-board)))))
+          (t (opponent-move new-board)))
+    )
+)
 
 (defun choose-best-move (board)
-  (random-move-strategy board))
+  (random-move-strategy board)
+)
 
 (defun random-move-strategy (board)
   (list (pick-random-empty-position board)
-        "random move"))
+        "random move")
+  )
 
 (defun pick-random-empty-position (board)
   (let ((pos (+ 1 (random 9))))
     (if (zerop (nth pos board))
         pos
-      (pick-random-empty-position board))))
-
+      (pick-random-empty-position board)
+    )
+  )
+)
 
           
  (defun play-one-game ()
-  (if (y-or-n-p "Would yoy like to go first? ")
+
+    (if (y-or-n-p "Would you like to play a friend? ")
       (opponent-move (make-board))
-    (computer-move (make-board))))
+      (who-first)
+    )
+  )
+
+
+  (defun who-first()
+    (print "you have no friends")
+    (if (y-or-n-p "Would you like to go first?")
+      (opponent-move (make-board))
+      (computer-move (make-board))
+    )
+  )
+
+)
