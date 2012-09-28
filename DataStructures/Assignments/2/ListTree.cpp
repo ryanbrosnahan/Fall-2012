@@ -16,41 +16,57 @@ using namespace std;
 template <typename T>
 class ListTree {
 	private:
-	TreeTreeNode<T> *head; // List head pointer
+	TreeNode<T> *head;
 
 	public:
 	// Constructor
-	ListTree();
+	ListTree() {
+		head = NULL;
+	}
 
 	// Destructor
 	~ListTree();
 
-	T sum();
+	T sum(TreeNode<T> *);
 
 	void addTreeNode(T);
 	void deleteTreeNode(T);
-	void displayList() const;
+	void displayPre(TreeNode<T> *);
 
 };
 
 template <typename T>
-T ListTree::sum(TreeNode<T>* node) {
-	if(node->value == NULL)
-		return NULL;
-	else
-		return (node->value + sum(node->left) + sum(node->right));
+ListTree<T>::~ListTree() {
+
 }
 
 template <typename T>
-void ListTree::addTreeNode(T val) {
+void ListTree<T>::displayPre(TreeNode<T> *node = head) {
+	if ( node != NULL ) {
+		cout << node->item << " ";
+		preorderPrint( node->left );
+		preorderPrint( node->right );
+	}
+}
+
+template <typename T>
+T ListTree<T>::sum(TreeNode<T> *node) {
+	if(node->value == NULL)
+		return NULL;
+
+	return (node->value + sum(node->left) + sum(node->right));
+}
+
+template <typename T>
+void ListTree<T>::addTreeNode(T val) {
 
 	if(head == NULL) {
 		head->value = val;
 		return;
 	}
 
-	TreeNode<T> temp = head;
-	while(temp->left != NULL || temp->right != NULL)
+	TreeNode<T> *temp = head;
+	while(temp->left != NULL || temp->right != NULL) {
 
 		if(temp->value > val) {
 
@@ -62,7 +78,6 @@ void ListTree::addTreeNode(T val) {
 
 		temp = temp->right;
 	}
-
-	
-
 }
+
+

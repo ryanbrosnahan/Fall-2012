@@ -7,7 +7,7 @@ main : main.o
 	g++ main.o -o main
 
 main.o : main.cpp
-	g++ -c main.cpp -std=c++0x
+	g++ -c main.cpp
 
 clean :
 	rm -f main.o main

@@ -1,27 +1,27 @@
 /*
-Node.cpp  - Templated node for use in linked list
+TreeNode.cpp  - Templated node for use in linked list
 
 Ryan Brosnahan
 BrosnahanRyan@gmail.com
 rjb39
  */
 
-#ifndef TREENODE_H
-#define TREENODE_H
+#ifndef TREENODE_CPP
+#define TREENODE_CPP
 
 template<class T>
-class Node {
+class TreeNode {
 public:
     T value;
-    Node* left;
-    Node* right;
+    TreeNode* left;
+    TreeNode* right;
 
-    Node() {
+    TreeNode() {
         left = right = NULL;
         value = NULL;
     }
 
-    Node(T t) {
+    TreeNode(T t) {
         value = t;
         left = right = NULL;
     }
