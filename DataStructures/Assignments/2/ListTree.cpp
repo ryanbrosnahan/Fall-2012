@@ -9,7 +9,7 @@ rjb39
 
 #include <cstdlib>
 #include <iostream>
-#include "TreeTreeNode.cpp"
+#include "TreeNode.cpp"
 
 using namespace std;
 
@@ -20,26 +20,49 @@ class ListTree {
 
 	public:
 	// Constructor
-	ListTree() {
-		head = NULL;
-	}
+	ListTree();
 
 	// Destructor
 	~ListTree();
 
 	T sum();
 
-	void insertTreeNode(T);
+	void addTreeNode(T);
 	void deleteTreeNode(T);
 	void displayList() const;
 
 };
 
-
-T ListTree::sum(TreeNode* node) {
+template <typename T>
+T ListTree::sum(TreeNode<T>* node) {
 	if(node->value == NULL)
 		return NULL;
 	else
-		return (sum)	
+		return (node->value + sum(node->left) + sum(node->right));
 }
 
+template <typename T>
+void ListTree::addTreeNode(T val) {
+
+	if(head == NULL) {
+		head->value = val;
+		return;
+	}
+
+	TreeNode<T> temp = head;
+	while(temp->left != NULL || temp->right != NULL)
+
+		if(temp->value > val) {
+
+			if(temp->left == NULL) {
+				temp = temp->left;
+			}
+
+		}
+
+		temp = temp->right;
+	}
+
+	
+
+}

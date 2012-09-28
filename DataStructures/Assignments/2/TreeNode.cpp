@@ -26,25 +26,6 @@ public:
         left = right = NULL;
     }
 
-    T getValue() {
-        return value;
-    }
-
-    Node* getLeft() {
-        return left;
-    }
-
-    Node* getRight() {
-        return right;
-    }
-
-    void setLeft(Node* n) {
-        left = n;
-    }
-    void setRight(Node* n) {
-        right = n;
-    }
-
 };
 
 #endif
