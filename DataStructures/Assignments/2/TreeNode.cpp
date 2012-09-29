@@ -21,8 +21,8 @@ public:
         value = NULL;
     }
 
-    TreeNode(T t) {
-        value = t;
+    TreeNode(T val) {
+        value = val;
         left = right = NULL;
     }
 

@@ -26,6 +26,7 @@ class ListTree {
 	// Destructor
 	~ListTree();
 
+
 	T sum(TreeNode<T> *);
 
 
@@ -46,9 +47,7 @@ ListTree<T>::ListTree() {
 
 template <typename T>
 ListTree<T>::ListTree(T val) {
-	TreeNode<T> temp;
-	temp->value = val;
-	head = temp;
+	insert(val);
 }
 
 template <typename T>
@@ -58,21 +57,26 @@ ListTree<T>::~ListTree() {
 
 template <typename T>
 void ListTree<T>::display() {
-	ListTree<T>::displayPre(head);
+	displayPre(head);
+	std::cout << "test1";
 }
 
 template <typename T>
 void ListTree<T>::displayPre(TreeNode<T> *node) {
 	if (node != NULL) {
 		cout << node->value << " ";
-		ListTree<T>::displayPre(node->left);
-		ListTree<T>::displayPre(node->right);
+		displayPre(node->left);
+		displayPre(node->right);
+			std::cout << "test2";
 	}
+		std::cout << "test3";
 }
 
 template <typename T>
 void ListTree<T>::insert(T val) {
-	ListTree<T>::addTreeNode(head, val);
+
+	addTreeNode(head, val);
+	return;
 }
 
 template <typename T>
@@ -83,6 +87,7 @@ void ListTree<T>::addTreeNode(TreeNode<T> *node, T val) {
 		addTreeNode(node->left, val);
 	else
 		addTreeNode(node->right, val);
+	return;
 }
 
 template <typename T>
@@ -90,5 +95,6 @@ T ListTree<T>::sum(TreeNode<T> *node) {
 	if(node->value == NULL)
 		return NULL;
 
+	std::cout << node->value << std::endl;
 	return (node->value + sum(node->left) + sum(node->right));
 }
