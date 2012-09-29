@@ -20,20 +20,36 @@ class ListTree {
 
 	public:
 	// Constructor
-	ListTree() {
-		head = NULL;
-	}
+	ListTree();
+	ListTree(T);
 
 	// Destructor
 	~ListTree();
 
 	T sum(TreeNode<T> *);
 
-	void addTreeNode(T);
-	void deleteTreeNode(T);
+
+	void display();
 	void displayPre(TreeNode<T> *);
 
+	void insert(T);
+	void addTreeNode(TreeNode<T> *, T);
+
+	void deleteTreeNode(T);
+
 };
+
+template <typename T>
+ListTree<T>::ListTree() {
+	head = NULL;
+}
+
+template <typename T>
+ListTree<T>::ListTree(T val) {
+	TreeNode<T> temp;
+	temp->value = val;
+	head = temp;
+}
 
 template <typename T>
 ListTree<T>::~ListTree() {
@@ -41,12 +57,32 @@ ListTree<T>::~ListTree() {
 }
 
 template <typename T>
-void ListTree<T>::displayPre(TreeNode<T> *node = head) {
-	if ( node != NULL ) {
-		cout << node->item << " ";
-		preorderPrint( node->left );
-		preorderPrint( node->right );
+void ListTree<T>::display() {
+	ListTree<T>::displayPre(head);
+}
+
+template <typename T>
+void ListTree<T>::displayPre(TreeNode<T> *node) {
+	if (node != NULL) {
+		cout << node->value << " ";
+		ListTree<T>::displayPre(node->left);
+		ListTree<T>::displayPre(node->right);
 	}
+}
+
+template <typename T>
+void ListTree<T>::insert(T val) {
+	ListTree<T>::addTreeNode(head, val);
+}
+
+template <typename T>
+void ListTree<T>::addTreeNode(TreeNode<T> *node, T val) {
+	if(node == NULL)
+		node = new TreeNode<T>(val);
+	else if(val < node->value)
+		addTreeNode(node->left, val);
+	else
+		addTreeNode(node->right, val);
 }
 
 template <typename T>
@@ -56,28 +92,3 @@ T ListTree<T>::sum(TreeNode<T> *node) {
 
 	return (node->value + sum(node->left) + sum(node->right));
 }
-
-template <typename T>
-void ListTree<T>::addTreeNode(T val) {
-
-	if(head == NULL) {
-		head->value = val;
-		return;
-	}
-
-	TreeNode<T> *temp = head;
-	while(temp->left != NULL || temp->right != NULL) {
-
-		if(temp->value > val) {
-
-			if(temp->left == NULL) {
-				temp = temp->left;
-			}
-
-		}
-
-		temp = temp->right;
-	}
-}
-
-

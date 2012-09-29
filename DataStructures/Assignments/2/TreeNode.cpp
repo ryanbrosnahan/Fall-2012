@@ -1,5 +1,5 @@
 /*
-TreeNode.cpp  - Templated node for use in linked list
+TreeNode.cpp  - Templated node for use in binary tree
 
 Ryan Brosnahan
 BrosnahanRyan@gmail.com
