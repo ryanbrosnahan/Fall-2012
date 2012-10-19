@@ -9,6 +9,8 @@ rjb39
 
 #include <iostream>
 #include <fstream>
+#include <map>
+#include <string>
 #include "HuffmanNode.hpp"
 
 class HuffmanTree {
@@ -27,6 +29,8 @@ class HuffmanTree {
 	void buildTree(const char*);
 	void makeTreefile();
 	void makeCode();
+
+	void encode(const char*, const char*);
 
 };
 
@@ -62,6 +66,7 @@ void HuffmanTree::buildTree(const char* fileName) {
 	freqfile.open(fileName);
 	char letter;
 	int freq;
+	head = new HuffmanNode;
 
 	while (freqfile.good()) {
 		freqfile >> letter >> freq;
@@ -70,6 +75,49 @@ void HuffmanTree::buildTree(const char* fileName) {
 	}
 
 	freqfile.close();
+
+	makeTreefile();
+	makeCode();
+}
+
+void HuffmanTree::makeTreefile() {
+
+}
+
+void HuffmanTree::makeCode() {
+
 }
 
 
+/*
+Opens a file with bit encoding and a message file and creates an
+encoded message file.
+ */
+void HuffmanTree::encode(const char* bitFileName, const char* messageFileName) {
+	std::ifstream bitFile;
+	bitFile.open(bitFileName);
+	std::ifstream messageFile;
+	messageFile.open(messageFileName);
+
+	char letter;
+	std::string code;
+
+	std::map<char, std::string> codeMap;
+	while(bitFile.good()) {
+		bitFile >> letter >> code;
+		codeMap[letter] = code;
+	}
+
+	std::ofstream encodedFile;
+	encodedFile.open("encodedMesage.txt");
+
+	while(messageFile.good()) {
+		messageFile >> letter;
+		encodedFile << codeMap[letter];
+	}
+
+	bitFile.close();
+	messageFile.close();
+	encodedFile.close();
+
+}

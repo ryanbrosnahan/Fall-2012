@@ -21,7 +21,7 @@ public:
     struct letterPair{
         int frequency;
         char letter;
-    } pair;
+    };
 
     std::vector <letterPair> letters;
 
@@ -34,18 +34,19 @@ public:
 
     HuffmanNode(char letter, int freq) {
 
-        pair.letter = letter;
-        pair.frequency = freq;
-        letters.push_back(pair);
+        addLetter(letter, freq);
 
         left = right = NULL;
     }
 
     void addLetter(char letter, int freq) {
 
+        letterPair pair;
         pair.letter = letter;
         pair.frequency = freq;
+        std::cout << pair.letter << " " << pair.frequency <<std::endl;
         letters.push_back(pair);
+
     }
 
 };
