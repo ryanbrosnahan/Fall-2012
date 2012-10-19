@@ -41,7 +41,8 @@ public:
         left = right = NULL;
     }
 
-    void AddLetter(char letter, int freq) {
+    void addLetter(char letter, int freq) {
+
         pair.letter = letter;
         pair.frequency = freq;
         letters.push_back(pair);
