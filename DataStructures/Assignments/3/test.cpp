@@ -12,7 +12,7 @@ int main() {
     //HT.printVector();
     std::cout << std::endl;
 
-    //HT.displayPre();
+    HT.displayPre();
 
 
     return 0;

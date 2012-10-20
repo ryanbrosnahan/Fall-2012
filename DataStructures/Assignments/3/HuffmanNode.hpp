@@ -98,8 +98,9 @@ public:
     }
 
     //overloaded < operator used by std::algorithm in HuffmanTree.hpp to sort the nodes
-    friend bool operator<(const HuffmanNode& nodea, const HuffmanNode& nodeb);
+    //friend bool operator<(const HuffmanNode& nodea, const HuffmanNode& nodeb);
 
+    friend bool compare(HuffmanNode* nodea, HuffmanNode* nodeb);
 
 };
 
@@ -109,7 +110,7 @@ public:
 @params nodea < nodeb
 @return bool(nodea < nodeb) evaluated
  */
-bool operator<(const HuffmanNode& nodea, const HuffmanNode& nodeb)  {
+/*bool operator<(const HuffmanNode& nodea, const HuffmanNode& nodeb)  {
     int sumA = 0;
     int sumB = 0;
 
@@ -124,6 +125,30 @@ bool operator<(const HuffmanNode& nodea, const HuffmanNode& nodeb)  {
             return nodeb.letters[0].letter > nodea.letters[0].letter;
 
         return nodeb.letters.size() < nodea.letters.size();
+    }
+    return sumA < sumB;
+}*/
+
+/*
+
+@params nodea < nodeb
+@return bool(nodea < nodeb) evaluated
+ */
+bool compare(HuffmanNode* nodea, HuffmanNode* nodeb)  {
+    int sumA = 0;
+    int sumB = 0;
+
+    for (int i = 0; i < nodea->letters.size(); ++i)
+        sumA += nodea->letters[i].frequency;
+
+    for (int i = 0; i < nodeb->letters.size(); ++i)
+        sumB += nodeb->letters[i].frequency;
+
+    if (sumA == sumB) {
+        if(nodeb->letters.size() == nodea->letters.size())
+            return nodeb->letters[0].letter > nodea->letters[0].letter;
+
+        return nodeb->letters.size() < nodea->letters.size();
     }
     return sumA < sumB;
 }

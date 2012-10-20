@@ -17,13 +17,13 @@ rjb39
 
 class HuffmanTree {
 	private:
-
+	std::deque<HuffmanNode*> nodeDeque;
 
 	public:
 	// Constructor
 	HuffmanTree();
 	HuffmanTree(char);
-std::deque<HuffmanNode> nodeDeque;
+
 	// Destructor
 	~HuffmanTree();
 	void deleteHuffmanNode(HuffmanNode *&);
@@ -76,7 +76,7 @@ void HuffmanTree::buildTree(const char* fileName) {
 	//fill the nodeDeque with nodes, each having a letter + frequency pair
 	while (freqfile.good()) {
 		freqfile >> letter >> freq;
-		HuffmanNode node(letter, freq);
+		HuffmanNode* node = new HuffmanNode(letter, freq);
 		nodeDeque.push_back(node);
 	}
 
@@ -104,19 +104,18 @@ void HuffmanTree::makeTree() {
 		//	1. remove them
 		//	2. combine them
 		//	3. push the new combined node back to the nodeDeque
-		HuffmanNode a = nodeDeque.front();
+		HuffmanNode* a = nodeDeque.front();
 		nodeDeque.pop_front();
-		HuffmanNode b = nodeDeque.front();
+		HuffmanNode* b = nodeDeque.front();
 		nodeDeque.pop_front();
-		HuffmanNode c(&a, &b);
+		HuffmanNode* c = new HuffmanNode(a, b);
 		nodeDeque.push_back(c);
 
 		//uncomment to watch the tree forming
-		nodeDeque[0].displayNode();
+		nodeDeque[0]->displayNode();
 	}
 
 }
-
 
 
 void HuffmanTree::makeCode() {
@@ -126,14 +125,14 @@ void HuffmanTree::makeCode() {
 //prints each node in the deque nodeDeque
 void HuffmanTree::printDeque() {
 	for(int i = 0; i < nodeDeque.size(); ++i) {
-		nodeDeque[i].displayNode();
+		nodeDeque[i]->displayNode();
 	}
 
 }
 
 //calls the recursive function displayPre
 void HuffmanTree::displayPre() {
-	displayPre(&nodeDeque[0]);
+	displayPre(nodeDeque[0]);
 }
 
 /*
@@ -155,18 +154,16 @@ void HuffmanTree::displayPre(HuffmanNode* node) {
 		else
 			std::cout << "$";
 
-		//displayPre(node->left);
-		//displayPre(node->right);
+		displayPre(node->left);
+		displayPre(node->right);
 	}
 	else
 		std::cout << "/";
 
-	HuffmanNode *l = node->left;
-	l->displayNode();
 }
 
 void HuffmanTree::sortDeque() {
-	std::sort(nodeDeque.begin(), nodeDeque.end());
+	std::sort(nodeDeque.begin(), nodeDeque.end(), compare);
 }
 
 /*
