@@ -10,6 +10,8 @@ rjb39
 
 
 #include <vector>
+#include <time.h>
+#include <cstring>
 
 #ifndef HUFFMANNODE_HPP
 #define HUFFMANNODE_HPP
@@ -18,6 +20,7 @@ rjb39
 class HuffmanNode {
 public:
 
+    int timestamp;
     //each leaf has a letter and its frequency
     struct letterPair{
         int frequency;
@@ -35,13 +38,22 @@ public:
 
     //default contructor
     HuffmanNode() {
+        time_t timestamp;
         left = right = NULL;
     }
 
     //constructor for a node with a letter + frequency pair
     HuffmanNode(char letter, int freq) {
+        time_t timestamp;
         addLetter(letter, freq);
         left = right = NULL;
+    }
+
+    int getWeight(){
+        int weight =  0;
+        for (int i = 0; i < letters.size(); ++i)
+            weight += letters[i].frequency;
+        return weight;
     }
 
 
@@ -54,6 +66,7 @@ public:
     @return void
      */
     HuffmanNode(HuffmanNode* a, HuffmanNode* b) {
+        time_t timestamp;
         //initialize left and right to null
         left = right = NULL;
 
@@ -97,6 +110,17 @@ public:
         std::cout << ")(" << sum << ")";
     }
 
+    bool letterExists(char l) {
+        for (int i = 0; i < letters.size(); ++i)
+            if(letters[i].letter == l)
+                return 1;
+        return 0;
+    }
+
+    bool isLeaf() {
+        return (left == NULL && right == NULL);
+    }
+
     //overloaded < operator used by std::algorithm in HuffmanTree.hpp to sort the nodes
     //friend bool operator<(const HuffmanNode& nodea, const HuffmanNode& nodeb);
 
@@ -105,27 +129,60 @@ public:
 };
 
 /*
+@desc for special cases of space, newline, eof, and period, the ascii is adjusted so
+the order is correct relative to the other alphanumeric values
+@param letter The letter to be converted
+@return if it is a special case, it returns the new ascii, otherwise it returns the input unchanged
+ */
+char convert(char letter) {
+    if (letter == char(45))
+        return 123;
+    if (letter == char(46))
+        return 124;
+    if (letter == char(33))
+        return 125;
+    if (letter == char(43))
+        return 126;
+    return letter;
+}
+
+/*
 @params nodea < nodeb
 @return bool(nodea < nodeb) evaluated
  */
 bool compare(HuffmanNode* nodea, HuffmanNode* nodeb)  {
-    int sumA = 0;
-    int sumB = 0;
 
-    for (int i = 0; i < nodea->letters.size(); ++i)
-        sumA += nodea->letters[i].frequency;
+    //get the "weight" of both the left and right trees
+    int sumA = nodea->getWeight();
+    int sumB = nodeb->getWeight();
 
-    for (int i = 0; i < nodeb->letters.size(); ++i)
-        sumB += nodeb->letters[i].frequency;
-
+    //if the weight of both nodes is equal
     if (sumA == sumB) {
-        if(nodeb->letters.size() == nodea->letters.size())
-            return nodeb->letters[0].letter > nodea->letters[0].letter;
 
-        return nodeb->letters.size() < nodea->letters.size();
+        //if they are both leaf nodes, use order in aphabet
+        if(nodea->isLeaf() && nodeb->isLeaf()) {
+            //run the convert function on each leaf and compare
+            char a = convert(nodea->letters[0].letter);
+            char b = convert(nodeb->letters[0].letter);
+            return a < b;
+        }
+
+        //at least one of the nodes must be an inner branch; leaves get lower priority
+        if(nodea->isLeaf())
+            return 0;
+        if(nodeb->isLeaf())
+            return 1;
+
+        //if both are inner branches, compare by most recently created
+        return nodeb->timestamp > nodea->timestamp;
     }
+
+    //if the weights are different, evaluate
     return sumA < sumB;
 }
+
+
+
 
 
 #endif

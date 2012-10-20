@@ -16,10 +16,11 @@ rjb39
 #include "HuffmanNode.hpp"
 
 class HuffmanTree {
-	private:
+private:
 	std::deque<HuffmanNode*> nodeDeque;
+	std::string tree;
 
-	public:
+public:
 	// Constructor
 	HuffmanTree();
 	HuffmanTree(char);
@@ -28,9 +29,14 @@ class HuffmanTree {
 	~HuffmanTree();
 	void deleteHuffmanNode(HuffmanNode *&);
 
-	void buildTree(const char*);
+	void buildTree(const char*, const char*, const char*);
 	void makeTree();
-	void makeCode();
+
+	void generateCodefile(const char*);
+	std::string getLetterCode(const char);
+
+	void generateTreeFile(const char* );
+	void generateTreeFile(HuffmanNode *);
 
 	void printDeque();
 	void displayPre();
@@ -47,6 +53,7 @@ HuffmanTree::HuffmanTree() {
 
 
 HuffmanTree::~HuffmanTree() {
+	deleteHuffmanNode(nodeDeque[0]);
 }
 
 void HuffmanTree::deleteHuffmanNode(HuffmanNode *&node) {
@@ -63,11 +70,11 @@ void HuffmanTree::deleteHuffmanNode(HuffmanNode *&node) {
 Opens the file which is a frequency file and uses it to create a file with the tree and a file with
 and the bit code assignments for each letter.
  */
-void HuffmanTree::buildTree(const char* fileName) {
+void HuffmanTree::buildTree(const char* freqfileName, const char* treefileName, const char* codefileName) {
 
 	//create a handle and open the file
 	std::ifstream freqfile;
-	freqfile.open(fileName);
+	freqfile.open(freqfileName);
 
 	//create some variables to stream the file into
 	char letter;
@@ -85,8 +92,8 @@ void HuffmanTree::buildTree(const char* fileName) {
 
 	//turn this Deque full of nodes into 1 tree
 	makeTree();
-
-	//makeCode();
+	generateTreeFile(treefileName);
+	generateCodefile(codefileName);
 }
 
 /*
@@ -112,13 +119,50 @@ void HuffmanTree::makeTree() {
 		nodeDeque.push_back(c);
 
 		//uncomment to watch the tree forming
-		nodeDeque[0]->displayNode();
+		//nodeDeque[0]->displayNode();
 	}
 
 }
 
 
-void HuffmanTree::makeCode() {
+void HuffmanTree::generateCodefile(const char* codefileName) {
+	std::ofstream codefile;
+	codefile.open(codefileName);
+
+	for (int i = 0; i < nodeDeque[0]->letters.size(); i++){
+		char currentLetter = nodeDeque[0]->letters[i].letter;
+		codefile << currentLetter << " " << getLetterCode(currentLetter) << std::endl;
+	}
+
+	codefile.close();
+
+}
+
+std::string HuffmanTree::getLetterCode(const char l) {
+	std::string code = "";
+	HuffmanNode* temp = nodeDeque.front();
+
+	if(!temp->letterExists(l)) {
+		std::cout << "This letter does not exist in the tree";
+		return "";
+	}
+
+
+	while( !(temp->isLeaf()) ){
+
+		if(temp->left->letterExists(l)) {
+			code += "0";
+			temp = temp->left;
+		}
+		else if(temp->right->letterExists(l)) {
+			code += "1";
+			temp = temp->right;
+		}
+
+	}
+
+
+	return code;
 
 }
 
@@ -146,19 +190,53 @@ From this, the tree can be reconstructed
 @return void; prints to console
  */
 void HuffmanTree::displayPre(HuffmanNode* node) {
-	//std::cout << "pre: ";
-
 	if (node) {
 		if(node->left == NULL && node->right == NULL)
 			std::cout << node->letters[0].letter;
 		else
 			std::cout << "$";
-
 		displayPre(node->left);
 		displayPre(node->right);
 	}
 	else
 		std::cout << "/";
+}
+
+//calls the recursive function generateTreeFile
+void HuffmanTree::generateTreeFile(const char* treefileName) {
+
+	std::ofstream treefile;
+	treefile.open(treefileName);
+
+	generateTreeFile(nodeDeque[0]);
+
+	treefile << tree;
+
+	treefile.close();
+}
+
+/*
+@desc writes a local file called "treefile.txt that "
+Key:
+	$ = Inner branch
+	'letter' = leaf
+	/ = null
+From this, the tree can be reconstructed
+@param node the root of the tree or subtree
+@return void; prints to console
+ */
+void HuffmanTree::generateTreeFile(HuffmanNode* node){
+
+	if (node) {
+		if(node->left == NULL && node->right == NULL)
+			tree += node->letters[0].letter;
+		else
+			tree += "$";
+		generateTreeFile(node->left);
+		generateTreeFile(node->right);
+	}
+	else
+		tree += "/";
 
 }
 
@@ -186,7 +264,7 @@ void HuffmanTree::encode(const char* bitFileName, const char* messageFileName) {
 	}
 
 	std::ofstream encodedFile;
-	encodedFile.open("encodedMesage.txt");
+	encodedFile.open(messageFileName);
 
 	while(messageFile.good()) {
 		messageFile >> letter;
