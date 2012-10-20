@@ -104,33 +104,7 @@ public:
 
 };
 
-
 /*
-@desc ranks first based on the total frequency of a node. Second based on the size of the node.
-@params nodea < nodeb
-@return bool(nodea < nodeb) evaluated
- */
-/*bool operator<(const HuffmanNode& nodea, const HuffmanNode& nodeb)  {
-    int sumA = 0;
-    int sumB = 0;
-
-    for (int i = 0; i < nodea.letters.size(); ++i)
-        sumA += nodea.letters[i].frequency;
-
-    for (int i = 0; i < nodeb.letters.size(); ++i)
-        sumB += nodeb.letters[i].frequency;
-
-    if (sumA == sumB) {
-        if(nodeb.letters.size() == nodea.letters.size())
-            return nodeb.letters[0].letter > nodea.letters[0].letter;
-
-        return nodeb.letters.size() < nodea.letters.size();
-    }
-    return sumA < sumB;
-}*/
-
-/*
-
 @params nodea < nodeb
 @return bool(nodea < nodeb) evaluated
  */
@@ -152,9 +126,6 @@ bool compare(HuffmanNode* nodea, HuffmanNode* nodeb)  {
     }
     return sumA < sumB;
 }
-
-
-
 
 
 #endif
