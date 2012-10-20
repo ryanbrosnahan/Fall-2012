@@ -12,28 +12,30 @@ rjb39
 #include <map>
 #include <string>
 #include <algorithm>
+#include <deque>
 #include "HuffmanNode.hpp"
 
 class HuffmanTree {
 	private:
-	HuffmanNode *head;
-	std::vector<HuffmanNode*> nodeVector;
+
 
 	public:
 	// Constructor
 	HuffmanTree();
 	HuffmanTree(char);
-
+std::deque<HuffmanNode> nodeDeque;
 	// Destructor
 	~HuffmanTree();
 	void deleteHuffmanNode(HuffmanNode *&);
 
 	void buildTree(const char*);
-	void makeTreefile();
+	void makeTree();
 	void makeCode();
 
-	void printVector();
-	void sortVector();
+	void printDeque();
+	void displayPre();
+	void displayPre(HuffmanNode *);
+	void sortDeque();
 
 	void encode(const char*, const char*);
 
@@ -41,15 +43,10 @@ class HuffmanTree {
 
 
 HuffmanTree::HuffmanTree() {
-	head = new HuffmanNode;
 }
 
-HuffmanTree::HuffmanTree(char val) {
-	//insert(val);
-}
 
 HuffmanTree::~HuffmanTree() {
-	deleteHuffmanNode(head);
 }
 
 void HuffmanTree::deleteHuffmanNode(HuffmanNode *&node) {
@@ -67,45 +64,109 @@ Opens the file which is a frequency file and uses it to create a file with the t
 and the bit code assignments for each letter.
  */
 void HuffmanTree::buildTree(const char* fileName) {
+
+	//create a handle and open the file
 	std::ifstream freqfile;
 	freqfile.open(fileName);
+
+	//create some variables to stream the file into
 	char letter;
 	int freq;
 
-	//fill the nodeVector with nodes, each having a letter, frequency pair
+	//fill the nodeDeque with nodes, each having a letter + frequency pair
 	while (freqfile.good()) {
 		freqfile >> letter >> freq;
-		//std::cout << letter << " " << freq << std::endl;
-		HuffmanNode* node;
-		node = new HuffmanNode;
-		node->addLetter(letter, freq);
-		nodeVector.push_back(node);
+		HuffmanNode node(letter, freq);
+		nodeDeque.push_back(node);
 	}
 
+	//close the fole
 	freqfile.close();
 
-	makeTreefile();
-	makeCode();
+	//turn this Deque full of nodes into 1 tree
+	makeTree();
+
+	//makeCode();
 }
 
-void HuffmanTree::makeTreefile() {
+/*
+@desc combines the nodes in nodeDeque member into a single tree with head at nodeDeque[0]
+ */
+void HuffmanTree::makeTree() {
+
+	//while the tree isn't finished
+	while (nodeDeque.size() != 1) {
+
+		//maintain order of the Huffman Tree
+		sortDeque();
+
+		//nodes a and b are the first 2 (lowest) nodes
+		//	1. remove them
+		//	2. combine them
+		//	3. push the new combined node back to the nodeDeque
+		HuffmanNode a = nodeDeque.front();
+		nodeDeque.pop_front();
+		HuffmanNode b = nodeDeque.front();
+		nodeDeque.pop_front();
+		HuffmanNode c(&a, &b);
+		nodeDeque.push_back(c);
+
+		//uncomment to watch the tree forming
+		nodeDeque[0].displayNode();
+	}
 
 }
+
+
 
 void HuffmanTree::makeCode() {
 
 }
 
-void HuffmanTree::printVector() {
-
-	for(int i = 0; i < nodeVector.size(); ++i) {
-		for (int n = 0; n < nodeVector[i]->letters.size(); ++n)
-			std::cout << nodeVector[i]->letters[n].letter << " " << nodeVector[i]->letters[n].frequency << std::endl;
+//prints each node in the deque nodeDeque
+void HuffmanTree::printDeque() {
+	for(int i = 0; i < nodeDeque.size(); ++i) {
+		nodeDeque[i].displayNode();
 	}
+
 }
 
-void HuffmanTree::sortVector() {
-	std::sort(nodeVector.begin(), nodeVector.end());
+//calls the recursive function displayPre
+void HuffmanTree::displayPre() {
+	displayPre(&nodeDeque[0]);
+}
+
+/*
+@desc recursively prints the tree.
+Key:
+	$ = Inner branch
+	'letter' = leaf
+	/ = null
+From this, the tree can be reconstructed
+@param node the root of the tree or subtree
+@return void; prints to console
+ */
+void HuffmanTree::displayPre(HuffmanNode* node) {
+	//std::cout << "pre: ";
+
+	if (node) {
+		if(node->left == NULL && node->right == NULL)
+			std::cout << node->letters[0].letter;
+		else
+			std::cout << "$";
+
+		//displayPre(node->left);
+		//displayPre(node->right);
+	}
+	else
+		std::cout << "/";
+
+	HuffmanNode *l = node->left;
+	l->displayNode();
+}
+
+void HuffmanTree::sortDeque() {
+	std::sort(nodeDeque.begin(), nodeDeque.end());
 }
 
 /*
