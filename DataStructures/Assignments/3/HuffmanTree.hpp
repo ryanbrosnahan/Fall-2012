@@ -11,11 +11,13 @@ rjb39
 #include <fstream>
 #include <map>
 #include <string>
+#include <algorithm>
 #include "HuffmanNode.hpp"
 
 class HuffmanTree {
 	private:
 	HuffmanNode *head;
+	std::vector<HuffmanNode*> nodeVector;
 
 	public:
 	// Constructor
@@ -30,13 +32,16 @@ class HuffmanTree {
 	void makeTreefile();
 	void makeCode();
 
+	void printVector();
+	void sortVector();
+
 	void encode(const char*, const char*);
 
 };
 
 
 HuffmanTree::HuffmanTree() {
-	head = NULL;
+	head = new HuffmanNode;
 }
 
 HuffmanTree::HuffmanTree(char val) {
@@ -66,12 +71,15 @@ void HuffmanTree::buildTree(const char* fileName) {
 	freqfile.open(fileName);
 	char letter;
 	int freq;
-	head = new HuffmanNode;
 
+	//fill the nodeVector with nodes, each having a letter, frequency pair
 	while (freqfile.good()) {
 		freqfile >> letter >> freq;
-		std::cout << letter << " " << freq << std::endl;
-		head->addLetter(letter, freq);
+		//std::cout << letter << " " << freq << std::endl;
+		HuffmanNode* node;
+		node = new HuffmanNode;
+		node->addLetter(letter, freq);
+		nodeVector.push_back(node);
 	}
 
 	freqfile.close();
@@ -88,6 +96,17 @@ void HuffmanTree::makeCode() {
 
 }
 
+void HuffmanTree::printVector() {
+
+	for(int i = 0; i < nodeVector.size(); ++i) {
+		for (int n = 0; n < nodeVector[i]->letters.size(); ++n)
+			std::cout << nodeVector[i]->letters[n].letter << " " << nodeVector[i]->letters[n].frequency << std::endl;
+	}
+}
+
+void HuffmanTree::sortVector() {
+	std::sort(nodeVector.begin(), nodeVector.end());
+}
 
 /*
 Opens a file with bit encoding and a message file and creates an

@@ -29,6 +29,7 @@ public:
     HuffmanNode* right;
 
     HuffmanNode() {
+
         left = right = NULL;
     }
 
@@ -44,11 +45,30 @@ public:
         letterPair pair;
         pair.letter = letter;
         pair.frequency = freq;
-        std::cout << pair.letter << " " << pair.frequency <<std::endl;
+        //std::cout << pair.letter << " " << pair.frequency <<std::endl;
         letters.push_back(pair);
 
     }
 
+    friend bool operator<(const HuffmanNode& , const HuffmanNode& );
+
 };
+
+    bool operator<(const HuffmanNode& nodea, const HuffmanNode& nodeb)  {
+        int sumA = 0;
+        int sumB = 0;
+
+        for (int i = 0; i < nodea.letters.size(); ++i)
+            sumA += nodea.letters[i].frequency;
+
+        for (int i = 0; i < nodeb.letters.size(); ++i)
+            sumB += nodeb.letters[i].frequency;
+
+        std::cout << sumA << " " << sumB << std::endl;
+
+        if (sumA == sumB)
+            return nodea.letters.size() < nodeb.letters.size();
+        return sumA < sumB;
+    }
 
 #endif
