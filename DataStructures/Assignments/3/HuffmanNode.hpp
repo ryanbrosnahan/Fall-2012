@@ -10,7 +10,6 @@ rjb39
 
 
 #include <vector>
-#include <time.h>
 #include <cstring>
 
 #ifndef HUFFMANNODE_HPP
@@ -20,7 +19,9 @@ rjb39
 class HuffmanNode {
 public:
 
-    int timestamp;
+    //trees may be sorted based on when they were created
+    double timestamp;
+
     //each leaf has a letter and its frequency
     struct letterPair{
         int frequency;
@@ -38,24 +39,16 @@ public:
 
     //default contructor
     HuffmanNode() {
-        time_t timestamp;
+        timestamp = 0;
         left = right = NULL;
     }
 
     //constructor for a node with a letter + frequency pair
     HuffmanNode(char letter, int freq) {
-        time_t timestamp;
+        timestamp = 0;
         addLetter(letter, freq);
         left = right = NULL;
     }
-
-    int getWeight(){
-        int weight =  0;
-        for (int i = 0; i < letters.size(); ++i)
-            weight += letters[i].frequency;
-        return weight;
-    }
-
 
     /*
     @desc Complex constructor takes 2 nodes and makes them the children of this
@@ -65,8 +58,10 @@ public:
     @param b The second node, should be the greater of the 2
     @return void
      */
-    HuffmanNode(HuffmanNode* a, HuffmanNode* b) {
-        time_t timestamp;
+    HuffmanNode(HuffmanNode* a, HuffmanNode* b, int t) {
+        //timestamp (psuedotime) from the tree
+        timestamp = t;
+
         //initialize left and right to null
         left = right = NULL;
 
@@ -99,6 +94,13 @@ public:
 
     }
 
+    int getWeight(){
+        int weight =  0;
+        for (int i = 0; i < letters.size(); ++i)
+            weight += letters[i].frequency;
+        return weight;
+    }
+
     //displays a node in the format "(letter: freq, letter: freq, ... letter: freq)(totalfreq)"
     void displayNode() {
         int sum = 0;
@@ -107,7 +109,7 @@ public:
             std::cout << letters[i].letter << ": " <<letters[i].frequency << ", ";
             sum+=letters[i].frequency;
         }
-        std::cout << ")(" << sum << ")";
+        std::cout << ")(" << sum << ")(" << timestamp << ")";
     }
 
     bool letterExists(char l) {
@@ -123,8 +125,6 @@ public:
 
     //overloaded < operator used by std::algorithm in HuffmanTree.hpp to sort the nodes
     //friend bool operator<(const HuffmanNode& nodea, const HuffmanNode& nodeb);
-
-    friend bool compare(HuffmanNode* nodea, HuffmanNode* nodeb);
 
 };
 
@@ -174,7 +174,7 @@ bool compare(HuffmanNode* nodea, HuffmanNode* nodeb)  {
             return 1;
 
         //if both are inner branches, compare by most recently created
-        return nodeb->timestamp > nodea->timestamp;
+        return nodeb->timestamp < nodea->timestamp;
     }
 
     //if the weights are different, evaluate

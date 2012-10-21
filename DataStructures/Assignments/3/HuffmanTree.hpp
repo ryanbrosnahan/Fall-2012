@@ -43,7 +43,7 @@ public:
 	void displayPre(HuffmanNode *);
 	void sortDeque();
 
-	void encode(const char*, const char*);
+	void encode(const char*, const char*, const char*);
 
 };
 
@@ -101,8 +101,14 @@ void HuffmanTree::buildTree(const char* freqfileName, const char* treefileName, 
  */
 void HuffmanTree::makeTree() {
 
+	//in the sort, trees may be compared based on time created; faking it is ok!
+	int psuedotime = 0;
+
 	//while the tree isn't finished
 	while (nodeDeque.size() != 1) {
+
+		//increment the time for the next node
+		psuedotime++;
 
 		//maintain order of the Huffman Tree
 		sortDeque();
@@ -115,11 +121,12 @@ void HuffmanTree::makeTree() {
 		nodeDeque.pop_front();
 		HuffmanNode* b = nodeDeque.front();
 		nodeDeque.pop_front();
-		HuffmanNode* c = new HuffmanNode(a, b);
+		HuffmanNode* c = new HuffmanNode(a, b, psuedotime);
 		nodeDeque.push_back(c);
 
 		//uncomment to watch the tree forming
 		//nodeDeque[0]->displayNode();
+		//printDeque();
 	}
 
 }
@@ -170,8 +177,9 @@ std::string HuffmanTree::getLetterCode(const char l) {
 void HuffmanTree::printDeque() {
 	for(int i = 0; i < nodeDeque.size(); ++i) {
 		nodeDeque[i]->displayNode();
+		std::cout << std::endl;
 	}
-
+	std::cout << std::endl;
 }
 
 //calls the recursive function displayPre
@@ -245,10 +253,12 @@ void HuffmanTree::sortDeque() {
 }
 
 /*
-Opens a file with bit encoding and a message file and creates an
-encoded message file.
+@desc encodes a message to binary
+@param bitFileName name of the file containing bitcodes for each letter
+@param messageFileName Name of the file containing the message to be encoded
+@param encodedMessageFileName the name of the file to be created to hold the encoded message
  */
-void HuffmanTree::encode(const char* bitFileName, const char* messageFileName) {
+void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, const char* encodedMessageFileName) {
 	std::ifstream bitFile;
 	bitFile.open(bitFileName);
 	std::ifstream messageFile;
@@ -264,7 +274,7 @@ void HuffmanTree::encode(const char* bitFileName, const char* messageFileName) {
 	}
 
 	std::ofstream encodedFile;
-	encodedFile.open(messageFileName);
+	encodedFile.open(encodedMessageFileName);
 
 	while(messageFile.good()) {
 		messageFile >> letter;
