@@ -13,6 +13,7 @@ rjb39
 #include <string>
 #include <algorithm>
 #include <deque>
+#include <cstdlib>
 #include "HuffmanNode.hpp"
 
 class HuffmanTree {
@@ -259,28 +260,74 @@ void HuffmanTree::sortDeque() {
 @param encodedMessageFileName the name of the file to be created to hold the encoded message
  */
 void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, const char* encodedMessageFileName) {
+
+	//open the 2 files used to encode the message
 	std::ifstream bitFile;
 	bitFile.open(bitFileName);
 	std::ifstream messageFile;
 	messageFile.open(messageFileName);
 
+	//the letter and code variables
 	char letter;
 	std::string code;
 
+	//and a table to hold them
 	std::map<char, std::string> codeMap;
+
+	//contruct the table
 	while(bitFile.good()) {
 		bitFile >> letter >> code;
 		codeMap[letter] = code;
 	}
 
+	//a string to hold the encoded message
+	std::string encodedMessage;
+
+	//stream the ecnoded file to the string
+	while(messageFile.good()) {
+		messageFile >> letter;
+		encodedMessage += codeMap[letter];
+	}
+
+	std::cout << "Encoded String: " << encodedMessage <<std::endl;
+
+	//open (create) a file to put the encoded message
 	std::ofstream encodedFile;
 	encodedFile.open(encodedMessageFileName);
 
-	while(messageFile.good()) {
-		messageFile >> letter;
-		encodedFile << codeMap[letter];
+	std::cout << "messagelength: " << encodedMessage.length() << "iterations: " << int(encodedMessage.length() / 8)<< std::endl;
+
+	//Create the encoded message
+	for (int i = 0; i < int(encodedMessage.length() / 8); i++) {
+
+		//string to hold 8 "bits" at a time
+		std::string smallString = "00000000";
+
+		//breaks up the encodedMessage string into each 8-"bit" section
+		for (int j = 0; j < 8; j++) {
+			smallString[j] = encodedMessage[(8*i)+j];
+		}
+
+		//8 "bit" code converted to decimal
+		int code = 0;
+
+		std::cout << smallString << std::endl;
+
+		smallString = std::string (smallString.rbegin(), smallString.rend());
+
+		for (int n = 0; n < 8; n++) {
+			if(smallString[n] == 49)
+				code += pow(2, n);
+		}
+
+		std::cout << code << std::endl;
+
+		//char typecast is 1 byte
+		encodedFile << char(code);
 	}
 
+
+	//close the files
 	bitFile.close();
 	messageFile.close();
 	encodedFile.close();

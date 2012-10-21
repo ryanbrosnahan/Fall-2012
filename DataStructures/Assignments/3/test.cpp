@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
         //HT.decode(argv[2], argv[3], argv[4]);
     }
 
+    return 0;
 
 
 }
