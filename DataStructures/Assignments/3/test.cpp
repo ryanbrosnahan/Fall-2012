@@ -3,11 +3,10 @@
 #include "HuffmanTree.hpp"
 #include <cstring>
 
-    char* clean(char* argument) {
-
-    }
+char* trimBrackets(char*);
 
 int main(int argc, char *argv[]) {
+       // std::cout << trimBrackets(argv[1]) << std::endl;
 
     if(argc != 5) {
         std::cout << "This program requires 4 arguments. Example invocations:" << std::endl <<std::endl
@@ -37,4 +36,25 @@ int main(int argc, char *argv[]) {
         //HT.decode(argv[2], argv[3], argv[4]);
     }
 
+
+
+}
+
+
+/*
+@desc Command line input arguments are filenames; in the case of windows the arguments need to
+        be surrounded by <> brackets, or cmd will think bad things. But in the case of bash, it
+        isn't necessary. This program doesn't take advantage of Bash piping feature.
+        See http://codeidol.com/unix/suse/Cool-Shell-Tricks/Piping-and-Directing-Output/
+@param the char[] argument passed from the command line
+@return the char[] trimmed if brackets <> are present
+ */
+char* trimBrackets(char* argument) {
+    char *trimmed = new char;
+    if(argument[0] == 60) {
+        for(int i = 1; i = strlen(argument) - 2; ++i)
+             trimmed[i-1] = argument[i];
+        return trimmed;
+    }
+    return argument;
 }
