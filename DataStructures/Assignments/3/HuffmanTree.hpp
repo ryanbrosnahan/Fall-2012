@@ -300,6 +300,7 @@ void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, c
 	//and a table to hold them
 	std::map<char, std::string> codeMap;
 
+
 	//contruct the table
 	while(bitFile.good()) {
 		bitFile >> letter >> code;
@@ -308,23 +309,30 @@ void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, c
 
 	//a string to hold the encoded message
 	std::string encodedMessage;
+	std::string line;
 
 	//stream the ecnoded file to the string
 	while(messageFile.good()) {
-		messageFile >> letter;
-		encodedMessage += codeMap[letter];
-	}
+		getline(messageFile, line);
 
-	std::cout << "Encoded String: " << encodedMessage <<std::endl;
+		for(int k = 0; k < line.length(); k++) {
+			//std::cout << int(line[k]) << std::endl;
+			if(line[k] == 32)
+				line[k] = 45;
+			if(line[k] == 10)
+				line[k] = 33;
+			encodedMessage += codeMap[line[k]];
+		}
+		encodedMessage += 10;
+	}
 
 	//open (create) a file to put the encoded message
 	std::ofstream encodedFile;
 	encodedFile.open(encodedMessageFileName);
 
-	std::cout << "messagelength: " << encodedMessage.length() << "iterations: " << int(encodedMessage.length() / 8)<< std::endl;
 
 	//Create the encoded message
-	for (int i = 0; i < int(encodedMessage.length() / 8); i++) {
+	for (int i = 0; i < (encodedMessage.length() / 8)+1; i++) {
 
 		//string to hold 8 "bits" at a time
 		std::string smallString = "00000000";
@@ -335,13 +343,13 @@ void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, c
 		//8 "bit" code converted to decimal
 		int code = 0;
 
-		std::cout << smallString ;
+		//std::cout << smallString ;
 
 		smallString = std::string (smallString.rbegin(), smallString.rend());
 
 		for (int n = 0; n < 8; n++) {
 			if(smallString[n] == 49)
-				code += pow(2, n);
+				code += int(pow(2, n));
 		}
 
 		//std::cout << code << std::endl;
@@ -499,7 +507,7 @@ void HuffmanTree::constructMessage(const char* encodedMessageFileName, const cha
 	while(message.good()) {
 		message >> in;
 		std::bitset<8> bin(in);
-		messageStr += bin.to_string();
+		messageStr +=  bin.to_string<char,std::char_traits<char>, std::allocator<char> >();
 	}
 
 	//open the file to put the decoded message
