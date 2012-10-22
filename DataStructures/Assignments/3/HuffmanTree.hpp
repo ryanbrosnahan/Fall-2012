@@ -15,6 +15,7 @@ rjb39
 #include <deque>
 #include <cstdlib>
 #include <cmath>
+#include <bitset>
 #include "HuffmanNode.hpp"
 
 class HuffmanTree {
@@ -55,6 +56,7 @@ public:
 	int getMiddle(std::string ts);
 
 	void constructMessage(const char*, const char*);
+	char convert(char in);
 
 };
 
@@ -459,6 +461,55 @@ int HuffmanTree::getMiddle(std::string ts) {
 @param messageFileName
 
  */
-void HuffmanTree::constructMessage(const char* encodedMessageFileName, const char *messageFileName) {
-	std::ifstream message(messageFileName);
+void HuffmanTree::constructMessage(const char* encodedMessageFileName, const char* messageFileName) {
+	std::ifstream message(encodedMessageFileName);
+	char in;
+	std::string messageStr;
+
+	while(message.good()) {
+		message >> in;
+		std::bitset<8> bin(in);
+		messageStr += bin.to_string();
+	}
+
+	std::ofstream outfile(messageFileName);
+
+	std::string decodedMessage;
+	HuffmanNode* traverse = head;
+
+	for (int i = 0; i < messageStr.length(); i++) {
+
+		if (messageStr[i] == 48)
+			traverse = traverse->left;
+		else
+			traverse = traverse->right;
+
+		char character;
+
+		if(traverse->isLeaf()) {
+
+			character = convert(traverse->letters[0].letter);
+			if(character == 4)
+				return;
+			outfile << character;
+			traverse = head;
+		}
+	}
+}
+
+
+char HuffmanTree::convert(char in) {
+	//convert - to space
+	if(in == 45)
+		return 32;
+
+	//convert ! to newline
+	if(in == 33)
+		return 10;
+
+	//convert + to end of file
+	if(in == 43)
+		return 4;
+
+	return in;
 }
