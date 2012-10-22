@@ -57,6 +57,7 @@ public:
 
 	void constructMessage(const char*, const char*);
 	char convert(char in);
+	bool checkFile(const char*);
 
 };
 
@@ -85,9 +86,13 @@ and the bit code assignments for each letter.
  */
 void HuffmanTree::buildTree(const char* freqFileName, const char* treeFileName, const char* codeFileName) {
 
+	if(!checkFile(freqFileName)) {
+		std::cout << "The file: " << freqFileName << " failed to load!";
+		return;
+	}
+
 	//create a handle and open the file
-	std::ifstream freqfile;
-	freqfile.open(freqFileName);
+	std::ifstream freqfile(freqFileName);
 
 	//create some variables to stream the file into
 	char letter;
@@ -273,6 +278,15 @@ void HuffmanTree::sortDeque() {
  */
 void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, const char* encodedMessageFileName) {
 
+	if(!checkFile(bitFileName)) {
+		std::cout << "The file: " << bitFileName << " failed to load!";
+		return;
+	}
+	if(!checkFile(messageFileName)) {
+		std::cout << "The file: " << messageFileName << " failed to load!";
+		return;
+	}
+
 	//open the 2 files used to encode the message
 	std::ifstream bitFile;
 	bitFile.open(bitFileName);
@@ -321,7 +335,7 @@ void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, c
 		//8 "bit" code converted to decimal
 		int code = 0;
 
-		std::cout << smallString << std::endl;
+		std::cout << smallString ;
 
 		smallString = std::string (smallString.rbegin(), smallString.rend());
 
@@ -330,7 +344,7 @@ void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, c
 				code += pow(2, n);
 		}
 
-		std::cout << code << std::endl;
+		//std::cout << code << std::endl;
 
 		//char typecast is 1 byte
 		encodedFile << char(code);
@@ -351,8 +365,19 @@ void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, c
 @param messageFileName name of the file to write the decoded message to
  */
 void HuffmanTree::decode(const char* treeFileName, const char* encodedMessageFileName, const char* messageFileName) {
+	if(!checkFile(treeFileName)) {
+		std::cout << "The file: " << treeFileName << " failed to load!";
+		return;
+	}
+	if(!checkFile(encodedMessageFileName)) {
+		std::cout << "The file: " << encodedMessageFileName << " failed to load!";
+		return;
+	}
+
 	reconstructTree(treeFileName);
 	constructMessage(encodedMessageFileName, messageFileName);
+
+
 }
 
 /*
@@ -462,32 +487,41 @@ int HuffmanTree::getMiddle(std::string ts) {
 
  */
 void HuffmanTree::constructMessage(const char* encodedMessageFileName, const char* messageFileName) {
+
+	//open the file
 	std::ifstream message(encodedMessageFileName);
+
+	//some temporary vars
 	char in;
 	std::string messageStr;
 
+	//stream the file to message, by first converting to binary, then to string
 	while(message.good()) {
 		message >> in;
 		std::bitset<8> bin(in);
 		messageStr += bin.to_string();
 	}
 
+	//open the file to put the decoded message
 	std::ofstream outfile(messageFileName);
 
+	//some temporary vars
 	std::string decodedMessage;
 	HuffmanNode* traverse = head;
 
+	//going through the message "bit" by "bit" to find the correct letter
 	for (int i = 0; i < messageStr.length(); i++) {
-
+		std::cout << messageStr[i];
+		//if the "bit" is a 0, go down the left subtree, else go right
 		if (messageStr[i] == 48)
 			traverse = traverse->left;
 		else
 			traverse = traverse->right;
 
-		char character;
-
+		//if we reach a leaf, get the letter and stream it into the file, then reset the traversal node to head
 		if(traverse->isLeaf()) {
 
+			char character;
 			character = convert(traverse->letters[0].letter);
 			if(character == 4)
 				return;
@@ -497,7 +531,11 @@ void HuffmanTree::constructMessage(const char* encodedMessageFileName, const cha
 	}
 }
 
-
+/*
+@desc converts - + ! to space, newline and EOT
+@param in character to be converted
+@return converts if necessary
+ */
 char HuffmanTree::convert(char in) {
 	//convert - to space
 	if(in == 45)
@@ -512,4 +550,19 @@ char HuffmanTree::convert(char in) {
 		return 4;
 
 	return in;
+}
+
+
+/*
+@desc checks if a file exists to be opened
+@param filen Name of the file to check
+@return true if file exists, otherwise false
+ */
+bool HuffmanTree::checkFile(const char* filen) {
+
+	std::ifstream file(filen);
+	if (file.good())
+		return 1;
+
+	return 0;
 }

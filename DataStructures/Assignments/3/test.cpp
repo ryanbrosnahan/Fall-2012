@@ -6,9 +6,9 @@
 int main(int argc, char *argv[]) {
     if(argc != 5) {
         std::cout << "This program requires 4 arguments. Example invocations:" << std::endl <<std::endl
-                    << "test buildtree <freqfile.txt> <treefile.txt> <code.txt>" << std::endl
-                    << "test encode <code.txt> <messagefile.txt> <encodedmessage.bin>" << std::endl
-                    << "test decode <treefile.txt> <encodedmessage.bin> <messagefile.txt>" << std::endl;
+                    << "test buildtree freqfile.txt treefile.txt code.txt" << std::endl
+                    << "test encode code.txt messagefile.txt encodedmessage.bin" << std::endl
+                    << "test decode treefile.txt encodedmessage.bin messagefile.txt" << std::endl;
         return 1;
     }
 
