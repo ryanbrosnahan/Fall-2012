@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     else if(!strcmp(argv[1], "decode")) {
         std::cout << "opening: " << argv[2] << " and " << argv[3] << " creating: " << argv[4] <<std::endl;
         HuffmanTree HT;
-        //HT.decode(argv[2], argv[3], argv[4]);
+        HT.decode(argv[2], argv[3], argv[4]);
     }
 
     return 0;

@@ -14,12 +14,14 @@ rjb39
 #include <algorithm>
 #include <deque>
 #include <cstdlib>
+#include <cmath>
 #include "HuffmanNode.hpp"
 
 class HuffmanTree {
 private:
 	std::deque<HuffmanNode*> nodeDeque;
 	std::string tree;
+	HuffmanNode* head;
 
 public:
 	// Constructor
@@ -46,6 +48,14 @@ public:
 
 	void encode(const char*, const char*, const char*);
 
+	void decode(const char*, const char*, const char*);
+	void reconstructTree(const char*);
+	HuffmanNode* reconstructTree(std::string);
+	std::string trim(std::string ts);
+	int getMiddle(std::string ts);
+
+	void constructMessage(const char*, const char*);
+
 };
 
 
@@ -71,11 +81,11 @@ void HuffmanTree::deleteHuffmanNode(HuffmanNode *&node) {
 Opens the file which is a frequency file and uses it to create a file with the tree and a file with
 and the bit code assignments for each letter.
  */
-void HuffmanTree::buildTree(const char* freqfileName, const char* treefileName, const char* codefileName) {
+void HuffmanTree::buildTree(const char* freqFileName, const char* treeFileName, const char* codeFileName) {
 
 	//create a handle and open the file
 	std::ifstream freqfile;
-	freqfile.open(freqfileName);
+	freqfile.open(freqFileName);
 
 	//create some variables to stream the file into
 	char letter;
@@ -93,8 +103,8 @@ void HuffmanTree::buildTree(const char* freqfileName, const char* treefileName, 
 
 	//turn this Deque full of nodes into 1 tree
 	makeTree();
-	generateTreeFile(treefileName);
-	generateCodefile(codefileName);
+	generateTreeFile(treeFileName);
+	generateCodefile(codeFileName);
 }
 
 /*
@@ -127,15 +137,15 @@ void HuffmanTree::makeTree() {
 
 		//uncomment to watch the tree forming
 		//nodeDeque[0]->displayNode();
-		//printDeque();
+		printDeque();
 	}
 
 }
 
 
-void HuffmanTree::generateCodefile(const char* codefileName) {
+void HuffmanTree::generateCodefile(const char* codeFileName) {
 	std::ofstream codefile;
-	codefile.open(codefileName);
+	codefile.open(codeFileName);
 
 	for (int i = 0; i < nodeDeque[0]->letters.size(); i++){
 		char currentLetter = nodeDeque[0]->letters[i].letter;
@@ -212,10 +222,10 @@ void HuffmanTree::displayPre(HuffmanNode* node) {
 }
 
 //calls the recursive function generateTreeFile
-void HuffmanTree::generateTreeFile(const char* treefileName) {
+void HuffmanTree::generateTreeFile(const char* treeFileName) {
 
 	std::ofstream treefile;
-	treefile.open(treefileName);
+	treefile.open(treeFileName);
 
 	generateTreeFile(nodeDeque[0]);
 
@@ -304,9 +314,7 @@ void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, c
 		std::string smallString = "00000000";
 
 		//breaks up the encodedMessage string into each 8-"bit" section
-		for (int j = 0; j < 8; j++) {
-			smallString[j] = encodedMessage[(8*i)+j];
-		}
+		smallString = encodedMessage.substr(8*i, 8);
 
 		//8 "bit" code converted to decimal
 		int code = 0;
@@ -332,4 +340,125 @@ void HuffmanTree::encode(const char* bitFileName, const char* messageFileName, c
 	messageFile.close();
 	encodedFile.close();
 
+}
+
+/*
+@desc takes the tree file and encoded file and decodes the file to a new file
+@param treeFileName name of the file containing the tree $$$d/$$s/ ...
+@param encodedFileName name of the file holding the encoded message
+@param messageFileName name of the file to write the decoded message to
+ */
+void HuffmanTree::decode(const char* treeFileName, const char* encodedMessageFileName, const char* messageFileName) {
+	reconstructTree(treeFileName);
+	constructMessage(encodedMessageFileName, messageFileName);
+}
+
+/*
+@desc takes the preorder treefile and reconstructs the tree
+@param treeFileName the name of the file with the tree $$$e/$$f ...
+ */
+void HuffmanTree::reconstructTree(const char* treeFileName) {
+	std::ifstream treefile;
+	treefile.open(treeFileName);
+
+	std::string temp;
+	while(treefile.good()) {
+		treefile >> temp;
+		tree +=temp;
+	}
+
+	head = reconstructTree(tree);
+	nodeDeque[0] = head;
+
+}
+
+
+/*
+@desc recursively reconstructs the tree from the string
+@param letters the tree $$$d//w//$...
+@return returns the node made from the given tree string
+ */
+HuffmanNode* HuffmanTree::reconstructTree(std::string letters) {
+
+	if(trim(letters).empty())
+		return NULL;
+
+	//the local root contains all letters
+	HuffmanNode* localroot = new HuffmanNode(trim(letters));
+
+	//the left half of the letters and the right
+	std::string left = letters.substr(1, getMiddle(letters));
+
+	std::string right = letters.substr(getMiddle(letters)+1);
+
+	localroot->left = reconstructTree(left);
+	localroot->right = reconstructTree(right);
+
+return localroot;
+}
+
+/*
+@desc trims the $$ and // from a tree so only the letters are left
+@param ts tree string
+@return the trimmed string(letters)
+ */
+std::string HuffmanTree::trim(std::string ts) {
+
+	//holds the trimmed string
+	std::string trimmed = "";
+
+	//for each character in the untrimmed
+	for(int i = 0; i < ts.length(); i++) {
+
+		//check if its a letter, if so concatenate to the trimmed string
+		if (ts[i] != 47 && ts[i] != 36)
+			trimmed += ts[i];
+	}
+
+	return trimmed;
+}
+
+
+/*
+@desc Given a string representation of a tree, this finds the point where the
+		tree is split between left and right. A special property of the tree
+		string is that it must have an equal number of "$" and letters, so we
+		can track the number of each and if they are even, we know we hit our
+		mark!
+@param ts tree string
+@return the position in the tree string where the left tree ends
+ */
+int HuffmanTree::getMiddle(std::string ts) {
+	int balance = 0;
+
+	if(ts.length() == 3)
+		balance++;
+
+	for (int i = 0; i < ts.length(); i++) {
+
+		//if the node is a "$", balance++
+		if (ts[i] == 36)
+			balance++;
+
+
+		//if the node is NOT a "$" AND NOT "/" aka it IS a letter, balance --
+		else if (ts[i] != 47 && ts[i] != 36)
+			balance--;
+
+
+		//if we have found the end of the left subtree
+		if (balance == 0)
+			return i + 2; //position where tree is split
+	}
+}
+
+/*
+@desc in the decoding process, after the tree has been reconstructed, the message
+		can be reconstructed
+@param encodedMessageFile the name of the file holding the encoded message
+@param messageFileName
+
+ */
+void HuffmanTree::constructMessage(const char* encodedMessageFileName, const char *messageFileName) {
+	std::ifstream message(messageFileName);
 }

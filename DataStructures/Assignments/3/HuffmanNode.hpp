@@ -50,6 +50,15 @@ public:
         left = right = NULL;
     }
 
+    HuffmanNode(std::string l) {
+        timestamp = 0;
+        left = right = NULL;
+
+        for(int i = 0; i < l.length(); i++) {
+            addLetter(l[i], -1);
+        }
+    }
+
     /*
     @desc Complex constructor takes 2 nodes and makes them the children of this
     newly contructed node. By definition, the parent must have the data from the
