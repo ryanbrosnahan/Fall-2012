@@ -1,0 +1,13 @@
+cartoon: 2 web pages found, 1 keyword lookups.
+   http://www.snpp.com/
+   http://geeks.net/
+algorithms: 3 web pages found, 3 keyword lookups.
+   http://cs.uakron.edu/~echeng/ds/index.html
+   http://www.sorting-algorithms.com/
+   http://geeks.net/
+data: 0 web pages found, 3 keyword lookups.
+building: 1 web pages found, 4 keyword lookups.
+   http://www.buildings.com/
+heap: 1 web pages found, 2 keyword lookups.
+   http://www.sorting-algorithms.com/
+TOTALS: 5 keywords, 7 web pages returned, 13 keyword lookups.
