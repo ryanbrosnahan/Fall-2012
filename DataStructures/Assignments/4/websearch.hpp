@@ -3,7 +3,6 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
-#include <array>
 #include <algorithm>
 
 class websearch {
@@ -29,8 +28,10 @@ private:
     };
 
     //array of keywords
-    std::array <keyword, 1000> words;
+    keyword words[1000];
     int numWords;
+
+    webUrl* head;
 
 
 public:
@@ -44,14 +45,19 @@ public:
     bool compare(keyword*, keyword*);
     void sortWords();
     void displayWords();
+    void addPageNode(std::string, webUrl&);
+    void displayUrls();
+    void addWebUrl(std::string);
 };
 
 
 
 websearch::websearch(const char* datafile, const char*searchfile, const char* outfile) {
     numWords = 0;
+    head = NULL;
     readData(datafile);
-    //displayWords();
+    displayWords();
+    //displayUrls();
 
 }
 
@@ -98,6 +104,7 @@ void websearch::addsite(std::string site) {
         return;
 
     //std::cout << "webpage: " << strings[0] << std::endl;
+    addWebUrl(strings[0]);
 
 
     for(int i = 1; i < strings.size(); i++) {
@@ -111,8 +118,6 @@ void websearch::addsite(std::string site) {
 
 void websearch::insertWord(std::string word, std::string website) {
 
-    std::cout << "word exists: " << word << wordExists(word) << std::endl;
-
     if(!wordExists(word)) {
         keyword key;
         key.word = word;
@@ -121,14 +126,20 @@ void websearch::insertWord(std::string word, std::string website) {
         numWords++;
         sortWords();
     }
+
+
 }
 
 bool websearch::wordExists(std::string word) {
     for(int i = 0; i < numWords; i++)
         if(words[i].word == word)
-            return 1;
+            return true;
 
-    return 0;
+    return false;
+}
+
+void websearch::addPageNode(std::string word, webUrl& website) {
+
 }
 
 bool websearch::compare(keyword* keyA, keyword* keyB) {
@@ -144,6 +155,48 @@ while(0 >= 1) {}
 void websearch::displayWords() {
     for(int i = 0; i < numWords; i++)
         std::cout << words[i].word << std::endl;
+}
+
+void websearch::displayUrls() {
+    webUrl *temp;
+
+    if(!head)
+        return;
+
+    else {
+        temp = head;
+
+        while(temp->next) {
+            std::cout << temp->url << std::endl;
+            temp = temp->next;
+        }
+    }
+}
+
+void websearch::addWebUrl(std::string url) {
+    std::cout << "add url: " << url << std::endl;
+
+    //make a new webUrl (a node)
+    webUrl *wu = new webUrl;
+    wu->url = url;
+
+    //if there are no nodes, make it the head
+    if(!head)
+        head = wu;
+
+
+    else {
+        //to traverse
+        webUrl *temp;
+        temp = head;
+
+        //get to the end
+        while(temp->next)
+            temp = temp->next;
+
+        //last node is the new one
+        temp->next = wu;
+    }
 }
 
 
