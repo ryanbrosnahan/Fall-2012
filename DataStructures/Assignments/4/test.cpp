@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     }
 
 
-    std::cout << "Datafile: " << argv[1] << " Searchfile: " << argv[2] << " Outputfile: " << argv[3] <<std::endl;
+    std::cout << "Datafile: " << argv[1] << " Searchfile: " << argv[2] << " Outputfile: " << argv[3] << std::endl << std::endl;
     websearch ws(argv[1], argv[2], argv[3]);
 
     return 0;
