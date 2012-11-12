@@ -23,6 +23,7 @@ private:
     struct keyword{
         std::string word;
         pageNode* next;
+        int numResults;
     };
 
     //array of keywords
@@ -30,6 +31,12 @@ private:
     int numWords;
 
     webUrl* head;
+
+    int totalKeywords;
+    int totalwebPages;
+    int totalLookups;
+
+    std::ofstream output;
 
 
 public:
@@ -46,27 +53,28 @@ public:
     void displayUrls();
     void addWebUrl(std::string);
     int wordLoc(std::string);
+    int numLookups(std::string);
 
     void readSearch(const char*);
     void search(std::string);
     void displayPages(keyword&);
-
+    void appendtotals();
+    void writeout(const char*);
 
 };
 
 
 
 websearch::websearch(const char* datafile, const char*searchfile, const char* outfile) {
-    numWords = 0;
+    numWords = totalLookups = totalwebPages = totalKeywords = 0;
     head = NULL;
     readData(datafile);
-    //displayWords();
+    displayWords();
     //displayUrls();
     readSearch(searchfile);
+    appendtotals();
 
-}
-
-websearch::websearch() {
+    std::ofstream output(outfile);
 }
 
 /*
@@ -126,12 +134,14 @@ void websearch::insertWord(std::string word, std::string website) {
         keyword key;
         key.word = word;
         key.next = NULL;
+        key.numResults = 0;
         words[numWords] = key;
         numWords++;
         sortWords();
     }
 
     addPageNode(word, website);
+
 }
 
 bool websearch::wordExists(std::string word) {
@@ -144,7 +154,7 @@ bool websearch::wordExists(std::string word) {
 
 void websearch::addPageNode(std::string word, std::string website) {
     int position = wordLoc(word);
-
+    words[position].numResults++;
     //create the pageNode
     pageNode *pn = new pageNode;
     //pn->url = tempUrl;
@@ -153,7 +163,7 @@ void websearch::addPageNode(std::string word, std::string website) {
     //find where the webUrl is
     webUrl *tempUrl;
     if(!head)
-        std::cout << "ERROR Cannot find URL matching " << website << std::endl;
+        output << "ERROR Cannot find URL matching " << website << std::endl;
 
     else {
         tempUrl = head;
@@ -169,7 +179,6 @@ void websearch::addPageNode(std::string word, std::string website) {
             }
         }
     }
-
 
     //find where to put the pageNode (the end)
     if(words[position].next) {
@@ -209,7 +218,33 @@ int websearch::wordLoc(std::string word) {
 
     return -1;
 
-    std::cout << "ERROR Could not find: " << word << std::endl;
+    output << "ERROR Could not find: " << word << std::endl;
+}
+
+
+int websearch::numLookups(std::string word) {
+        int a = 0;
+    int b = numWords;
+    int c;
+
+    int i = 1;
+    int max = 10;
+
+    while(i < max) {
+        c = (a + b)/2;
+
+        if (words[c].word == word || c == a || c == b)
+            return i;
+
+        if (words[c].word < word)
+            a = c;
+
+        else
+            b = c;
+
+        i++;
+    }
+
 }
 
 
@@ -234,7 +269,7 @@ void websearch::sortWords() {
 
 void websearch::displayWords() {
     for (int i = 0; i < numWords; i++)
-        std::cout << i << " " << words[i].word << std::endl;
+        output << i << " " << words[i].word << std::endl;
 }
 
 //display every url in the list
@@ -248,15 +283,15 @@ void websearch::displayUrls() {
         temp = head;
 
         while(temp->next) {
-            std::cout << temp->url << std::endl;
+            output << temp->url << std::endl;
             temp = temp->next;
         }
-        std::cout << temp->url << std::endl;
+        output << temp->url << std::endl;
     }
 }
 
 void websearch::addWebUrl(std::string url) {
-    //std::cout << "add url: " << url << std::endl;
+    //output << "add url: " << url << std::endl;
 
     //make a new webUrl (a node)
     webUrl *wu = new webUrl;
@@ -303,28 +338,45 @@ void websearch::readSearch(const char* searchfile) {
 
 void websearch::search(std::string search) {
     int position = wordLoc(search);
-    std::cout << "word: " << search << " is at " << position << std::endl;
+    totalKeywords++;
+
     if(position > -1)
         displayPages(words[position]);
+    else {
+        int lookups = numLookups(search);
+        totalLookups += lookups;
+        output << "test " << search << std::endl;
+        output << search << ": " << words[position].numResults << " webpages found, "
+                    << lookups << " lookups." << std::endl <<std::endl;
+    }
+
 }
 
 void websearch::displayPages(keyword& word) {
 
-
     //find where to put the pageNode (the end)
     if(word.next) {
-        std::cout << word.word << std::endl;
+        int lookups = numLookups(word.word);
+        totalLookups += lookups;
+        int results = word.numResults;
+        totalwebPages += results;
+        output << word.word << ": " << results << " webpages found, "
+                    << lookups << " lookups." << std::endl;
         pageNode *tempNode = word.next;
 
         while (tempNode->next) {
-            std::cout << tempNode->url->url << std::endl;
+            output << tempNode->url->url << std::endl;
             tempNode = tempNode->next;
         }
 
-        std::cout << tempNode->url->url << std::endl;
+        output << tempNode->url->url << std::endl <<std::endl;
     }
 }
 
 
-
+void websearch::appendtotals() {
+    output << "TOTALS: " << totalKeywords << " keywords, "
+                << totalwebPages << " web pages returned, "
+                << totalLookups << " keyword lookups." << std::endl;
+}
 
