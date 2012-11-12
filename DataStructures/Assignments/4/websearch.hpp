@@ -2,8 +2,6 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
-#include <iterator>
-#include <algorithm>
 
 class websearch {
 
@@ -42,12 +40,17 @@ public:
     void addsite(std::string);
     void insertWord(std::string, std::string);
     bool wordExists(std::string);
-    bool compare(keyword*, keyword*);
     void sortWords();
     void displayWords();
     void addPageNode(std::string, std::string);
     void displayUrls();
     void addWebUrl(std::string);
+    int wordLoc(std::string);
+
+    void readSearch(const char*);
+    void search(std::string);
+    void displayPages(keyword&);
+
 
 };
 
@@ -57,8 +60,9 @@ websearch::websearch(const char* datafile, const char*searchfile, const char* ou
     numWords = 0;
     head = NULL;
     readData(datafile);
-    displayWords();
-    displayUrls();
+    //displayWords();
+    //displayUrls();
+    readSearch(searchfile);
 
 }
 
@@ -112,7 +116,6 @@ void websearch::addsite(std::string site) {
     for (int i = 1; i < strings.size(); i++) {
         insertWord(strings[i], strings[0]);
     }
-
 }
 
 
@@ -128,9 +131,7 @@ void websearch::insertWord(std::string word, std::string website) {
         sortWords();
     }
 
-
     addPageNode(word, website);
-
 }
 
 bool websearch::wordExists(std::string word) {
@@ -142,12 +143,76 @@ bool websearch::wordExists(std::string word) {
 }
 
 void websearch::addPageNode(std::string word, std::string website) {
+    int position = wordLoc(word);
 
+    //create the pageNode
+    pageNode *pn = new pageNode;
+    //pn->url = tempUrl;
+    pn->next = NULL;
+
+    //find where the webUrl is
+    webUrl *tempUrl;
+    if(!head)
+        std::cout << "ERROR Cannot find URL matching " << website << std::endl;
+
+    else {
+        tempUrl = head;
+        if(tempUrl->url == website)
+            pn->url = tempUrl;
+
+        else {
+            while(tempUrl->next) {
+                tempUrl = tempUrl->next;
+
+                if(tempUrl->url == website)
+                    pn->url = tempUrl;
+            }
+        }
+    }
+
+
+    //find where to put the pageNode (the end)
+    if(words[position].next) {
+        pageNode *tempNode = words[position].next;
+
+        while (tempNode->next)
+            tempNode = tempNode->next;
+
+        tempNode->next = pn;
+    }
+    else
+        words[position].next = pn;
 }
 
-bool websearch::compare(keyword* keyA, keyword* keyB) {
-    return keyA->word < keyB->word;
+int websearch::wordLoc(std::string word) {
+    int a = 0;
+    int b = numWords;
+    int c;
+
+    int i = 0;
+    int max = 10;
+
+    while(i <= max) {
+        c = (a + b)/2;
+
+        if (words[c].word == word)
+            return c;
+
+        if (words[c].word < word)
+            a = c;
+
+        else
+            b = c;
+
+        i++;
+    }
+
+    return -1;
+
+    std::cout << "ERROR Could not find: " << word << std::endl;
 }
+
+
 
 //selection sort
 void websearch::sortWords() {
@@ -169,9 +234,10 @@ void websearch::sortWords() {
 
 void websearch::displayWords() {
     for (int i = 0; i < numWords; i++)
-        std::cout << words[i].word << std::endl;
+        std::cout << i << " " << words[i].word << std::endl;
 }
 
+//display every url in the list
 void websearch::displayUrls() {
     webUrl *temp;
 
@@ -214,4 +280,51 @@ void websearch::addWebUrl(std::string url) {
         temp->next = wu;
     }
 }
+
+
+void websearch::readSearch(const char* searchfile) {
+     //open the file
+    std::ifstream data(searchfile);
+
+    //check if it's good
+    if(data) {
+
+        //temporary string
+        std::string line;
+
+        //go through the file
+        while(data.good()) {
+
+            getline(data, line);
+            search(line);
+        }
+    }
+}
+
+void websearch::search(std::string search) {
+    int position = wordLoc(search);
+    std::cout << "word: " << search << " is at " << position << std::endl;
+    if(position > -1)
+        displayPages(words[position]);
+}
+
+void websearch::displayPages(keyword& word) {
+
+
+    //find where to put the pageNode (the end)
+    if(word.next) {
+        std::cout << word.word << std::endl;
+        pageNode *tempNode = word.next;
+
+        while (tempNode->next) {
+            std::cout << tempNode->url->url << std::endl;
+            tempNode = tempNode->next;
+        }
+
+        std::cout << tempNode->url->url << std::endl;
+    }
+}
+
+
+
 
