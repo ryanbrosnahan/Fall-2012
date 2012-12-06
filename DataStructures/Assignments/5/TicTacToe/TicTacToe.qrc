@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>TicTacToe.ico</file>
+    </qresource>
+</RCC>
