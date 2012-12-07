@@ -1,6 +1,10 @@
 *.stackdump
-/OOP/001
+/OOP
 *.exe
 *.o
 *.pyc
 *.mp3
+*.zip
+*.user
+*.pptx
+~*
