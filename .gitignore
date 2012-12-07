@@ -9,3 +9,10 @@
 *.pptx
 *.dll
 ~*
+*.avi
+*.bmp
+*.mp4
+*_Debug/
+DataStructures/Assignments/4/*.txt
+*.bak
+*.png
