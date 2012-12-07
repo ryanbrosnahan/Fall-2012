@@ -15,12 +15,14 @@ SOURCES += main.cpp\
     algo/movingaverage.cpp \
     data/datafeed.cpp \
     data/iqfeed.cpp \
-    data/emulatedfeed.cpp
+    data/emulatedfeed.cpp \
+    algo/seasonal.cpp
 
 HEADERS  += mainwindow.h \
     algo/movingaverage.h \
     data/datafeed.h \
     data/iqfeed.h \
-    data/emulatedfeed.h
+    data/emulatedfeed.h \
+    algo/seasonal.h
 
 FORMS    += mainwindow.ui
